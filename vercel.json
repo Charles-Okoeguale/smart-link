@@ -1,21 +1,21 @@
 {
     "version": 2,
-    "functions": {
-      "api/create-link.js": {
-        "runtime": "nodejs18.x"
-      },
-      "api/analytics/[id].js": {
-        "runtime": "nodejs18.x"
-      }
-    },
     "rewrites": [
       {
         "source": "/",
         "destination": "/api/index.js"
       },
       {
+        "source": "/api/create-link",
+        "destination": "/api/create-link.js"
+      },
+      {
+        "source": "/api/analytics/:id",
+        "destination": "/api/analytics/[id].js"
+      },
+      {
         "source": "/:id",
-        "destination": "/api/redirect.js?id=:id"
+        "destination": "/api/redirect.js"
       }
     ]
   }
