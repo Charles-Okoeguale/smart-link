@@ -74,8 +74,22 @@ export default async function handler(req, res) {
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; position: relative; min-width: 160px; }
         button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        .spinner { 
+            display: inline-block; 
+            width: 12px; 
+            height: 12px; 
+            border: 2px solid #ffffff; 
+            border-radius: 50%; 
+            border-top-color: transparent; 
+            animation: spin 1s ease-in-out infinite; 
+            margin-right: 5px;
+        }
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
         #result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none; }
         .result-link { word-break: break-all; color: #007bff; text-decoration: none; }
         .analytics { margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 4px; font-size: 14px; }
@@ -98,7 +112,12 @@ export default async function handler(req, res) {
             <label>Desktop URL (optional):</label>
             <input type="url" id="desktopUrl" placeholder="https://example.com">
         </div>
-        <button type="submit">Generate Smart Link</button>
+        <button type="submit" id="generateBtn">
+            <span id="btnText">Generate Smart Link</span>
+            <span id="btnLoader" style="display: none;">
+                <span class="spinner"></span> Generating...
+            </span>
+        </button>
     </form>
     
     <div id="result">
@@ -114,9 +133,20 @@ export default async function handler(req, res) {
         document.getElementById('linkForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Get form elements
             const iosUrl = document.getElementById('iosUrl').value;
             const androidUrl = document.getElementById('androidUrl').value;
             const desktopUrl = document.getElementById('desktopUrl').value || 'https://fallback.com';
+            
+            // Get button elements
+            const generateBtn = document.getElementById('generateBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
             
             try {
                 console.log('Sending request with data:', { iosUrl, androidUrl, desktopUrl });
@@ -159,6 +189,11 @@ export default async function handler(req, res) {
             } catch (error) {
                 console.error('Full error:', error);
                 alert('Error generating link: ' + error.message);
+            } finally {
+                // Reset button state
+                generateBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
             }
         });
 
