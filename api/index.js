@@ -4,16 +4,41 @@ import { nanoid } from 'nanoid';
 let links = new Map();
 let clicks = new Map();
 
-export default function handler(req, res) {
+// Helper function to parse JSON body
+async function parseBody(req) {
+  if (req.method === 'POST') {
+    return new Promise((resolve) => {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        try {
+          resolve(JSON.parse(body));
+        } catch (e) {
+          resolve({});
+        }
+      });
+    });
+  }
+  return {};
+}
+
+export default async function handler(req, res) {
   const { method } = req;
   const url = req.url || '';
 
   console.log('Request:', method, url); // Debug log
 
-  // Handle API routes first
-  if (method === 'POST' && (url === '/api/index.js' || url === '/api' || url === '/' || url.includes('index.js'))) {
-    // Create link
-    const { action, iosUrl, androidUrl, desktopUrl } = req.body;
+  // Parse body for POST requests
+  const body = await parseBody(req);
+  console.log('Parsed body:', body); // Debug log
+
+  // Handle POST requests (create link)
+  if (method === 'POST') {
+    const { iosUrl, androidUrl, desktopUrl } = body;
+    
+    console.log('Creating link with:', { iosUrl, androidUrl, desktopUrl }); // Debug
     
     if (!iosUrl || !androidUrl) {
       return res.status(400).json({ error: 'iOS and Android URLs are required' });
@@ -21,14 +46,18 @@ export default function handler(req, res) {
 
     const id = nanoid(6);
     links.set(id, { iosUrl, androidUrl, desktopUrl });
-    return res.json({ shortUrl: `https://${req.headers.host}/${id}` });
+    
+    const shortUrl = `https://${req.headers.host}/${id}`;
+    console.log('Generated shortUrl:', shortUrl); // Debug
+    
+    return res.status(200).json({ shortUrl });
   }
 
   // Handle analytics
   if (method === 'GET' && url.includes('/analytics/')) {
     const linkId = url.split('/analytics/')[1];
     const clickData = clicks.get(linkId) || [];
-    return res.json({ 
+    return res.status(200).json({ 
       clicks: clickData.length,
       timestamps: clickData 
     });
@@ -90,36 +119,36 @@ export default function handler(req, res) {
             const desktopUrl = document.getElementById('desktopUrl').value || 'https://fallback.com';
             
             try {
-                console.log('Sending request...'); // Debug
+                console.log('Sending request with data:', { iosUrl, androidUrl, desktopUrl });
                 
-                const response = await fetch(window.location.href, {
+                const response = await fetch(window.location.origin + '/api/index.js', {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        action: 'create', 
                         iosUrl, 
                         androidUrl, 
                         desktopUrl 
                     })
                 });
                 
-                console.log('Response status:', response.status); // Debug
+                console.log('Response status:', response.status);
                 
                 if (!response.ok) {
                     const text = await response.text();
+                    console.error('Error response:', text);
                     throw new Error(\`HTTP \${response.status}: \${text}\`);
                 }
                 
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    throw new Error(\`Expected JSON but got: \${text.substring(0, 100)}...\`);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (!data.shortUrl) {
+                    throw new Error('No shortUrl in response: ' + JSON.stringify(data));
                 }
                 
-                const data = await response.json();
                 currentLinkId = data.shortUrl.split('/').pop();
                 
                 document.getElementById('generatedLink').href = data.shortUrl;
@@ -128,7 +157,7 @@ export default function handler(req, res) {
                 document.getElementById('analytics').innerHTML = '<strong>Analytics:</strong> Click count will appear here after clicks';
                 
             } catch (error) {
-                console.error('Full error:', error); // Debug
+                console.error('Full error:', error);
                 alert('Error generating link: ' + error.message);
             }
         });
@@ -137,14 +166,16 @@ export default function handler(req, res) {
             if (!currentLinkId) return;
             
             try {
-                const response = await fetch(\`\${window.location.href}analytics/\${currentLinkId}\`);
-                const data = await response.json();
-                
-                document.getElementById('analytics').innerHTML = \`
-                    <strong>Analytics:</strong><br>
-                    Total Clicks: \${data.clicks}<br>
-                    Last Click: \${data.timestamps.length > 0 ? new Date(data.timestamps[data.timestamps.length - 1]).toLocaleString() : 'None'}
-                \`;
+                const response = await fetch(\`\${window.location.origin}/analytics/\${currentLinkId}\`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    document.getElementById('analytics').innerHTML = \`
+                        <strong>Analytics:</strong><br>
+                        Total Clicks: \${data.clicks}<br>
+                        Last Click: \${data.timestamps.length > 0 ? new Date(data.timestamps[data.timestamps.length - 1]).toLocaleString() : 'None'}
+                    \`;
+                }
             } catch (error) {
                 console.error('Error fetching analytics:', error);
             }
@@ -152,7 +183,7 @@ export default function handler(req, res) {
     </script>
 </body>
 </html>`;
-    return res.send(htmlContent);
+    return res.status(200).send(htmlContent);
   }
 
   // Handle redirects - only if it's a GET request and looks like a link ID
