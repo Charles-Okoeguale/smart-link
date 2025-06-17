@@ -2,20 +2,8 @@
     "version": 2,
     "rewrites": [
       {
-        "source": "/",
+        "source": "/(.*)",
         "destination": "/api/index.js"
-      },
-      {
-        "source": "/api/create-link",
-        "destination": "/api/create-link.js"
-      },
-      {
-        "source": "/api/analytics/:id",
-        "destination": "/api/analytics/[id].js"
-      },
-      {
-        "source": "/:id",
-        "destination": "/api/redirect.js"
       }
     ]
   }

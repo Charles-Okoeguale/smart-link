@@ -1,28 +1,55 @@
-import express from 'express';
 import { nanoid } from 'nanoid';
 
-const app = express();
-app.use(express.json());
+// In-memory storage
+let links = new Map();
+let clicks = new Map();
 
-const links = new Map();
-const clicks = new Map();
+export default function handler(req, res) {
+  const { method } = req;
+  const url = req.url || '';
 
-app.get('/', (req, res) => {
-  const htmlContent = `<!DOCTYPE html>
-<html lang="en">
+  console.log('Request:', method, url); // Debug log
+
+  // Handle API routes first
+  if (method === 'POST' && (url === '/api/index.js' || url === '/api' || url === '/' || url.includes('index.js'))) {
+    // Create link
+    const { action, iosUrl, androidUrl, desktopUrl } = req.body;
+    
+    if (!iosUrl || !androidUrl) {
+      return res.status(400).json({ error: 'iOS and Android URLs are required' });
+    }
+
+    const id = nanoid(6);
+    links.set(id, { iosUrl, androidUrl, desktopUrl });
+    return res.json({ shortUrl: `https://${req.headers.host}/${id}` });
+  }
+
+  // Handle analytics
+  if (method === 'GET' && url.includes('/analytics/')) {
+    const linkId = url.split('/analytics/')[1];
+    const clickData = clicks.get(linkId) || [];
+    return res.json({ 
+      clicks: clickData.length,
+      timestamps: clickData 
+    });
+  }
+
+  // Handle main page
+  if (method === 'GET' && (url === '/' || url === '/api/index.js' || url.includes('index.js'))) {
+    const htmlContent = `<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Links PoC</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="url"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-        #result { margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 4px; display: none; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none; }
         .result-link { word-break: break-all; color: #007bff; text-decoration: none; }
-        .analytics { margin-top: 10px; padding: 10px; background-color: #e9ecef; border-radius: 4px; font-size: 14px; }
+        .analytics { margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 4px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -31,63 +58,88 @@ app.get('/', (req, res) => {
     
     <form id="linkForm">
         <div class="form-group">
-            <label for="iosUrl">iOS URL:</label>
-            <input type="url" id="iosUrl" name="iosUrl" placeholder="https://apps.apple.com/app/..." required>
+            <label>iOS URL:</label>
+            <input type="url" id="iosUrl" placeholder="https://apps.apple.com/app/..." required>
         </div>
         <div class="form-group">
-            <label for="androidUrl">Android URL:</label>
-            <input type="url" id="androidUrl" name="androidUrl" placeholder="https://play.google.com/store/apps/..." required>
+            <label>Android URL:</label>
+            <input type="url" id="androidUrl" placeholder="https://play.google.com/store/apps/..." required>
         </div>
         <div class="form-group">
-            <label for="desktopUrl">Desktop URL (optional):</label>
-            <input type="url" id="desktopUrl" name="desktopUrl" placeholder="https://example.com (fallback)">
+            <label>Desktop URL (optional):</label>
+            <input type="url" id="desktopUrl" placeholder="https://example.com">
         </div>
         <button type="submit">Generate Smart Link</button>
     </form>
     
     <div id="result">
         <h3>Generated Smart Link:</h3>
-        <a id="generatedLink" class="result-link" href="#" target="_blank"></a>
+        <a id="generatedLink" href="#" target="_blank"></a>
         <div class="analytics" id="analytics"></div>
         <button onclick="checkAnalytics()" style="margin-top: 10px;">Check Analytics</button>
     </div>
 
     <script>
         let currentLinkId = null;
+        
         document.getElementById('linkForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
-            const iosUrl = formData.get('iosUrl');
-            const androidUrl = formData.get('androidUrl');
-            const desktopUrl = formData.get('desktopUrl') || 'https://fallback.com';
+            
+            const iosUrl = document.getElementById('iosUrl').value;
+            const androidUrl = document.getElementById('androidUrl').value;
+            const desktopUrl = document.getElementById('desktopUrl').value || 'https://fallback.com';
             
             try {
-                const response = await fetch('/api/create-link', {
+                console.log('Sending request...'); // Debug
+                
+                const response = await fetch(window.location.href, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ iosUrl, androidUrl, desktopUrl })
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        action: 'create', 
+                        iosUrl, 
+                        androidUrl, 
+                        desktopUrl 
+                    })
                 });
                 
+                console.log('Response status:', response.status); // Debug
+                
                 if (!response.ok) {
-                    throw new Error('Failed to create link');
+                    const text = await response.text();
+                    throw new Error(\`HTTP \${response.status}: \${text}\`);
                 }
                 
-                const { shortUrl } = await response.json();
-                currentLinkId = shortUrl.split('/').pop();
-                document.getElementById('generatedLink').href = shortUrl;
-                document.getElementById('generatedLink').textContent = shortUrl;
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    throw new Error(\`Expected JSON but got: \${text.substring(0, 100)}...\`);
+                }
+                
+                const data = await response.json();
+                currentLinkId = data.shortUrl.split('/').pop();
+                
+                document.getElementById('generatedLink').href = data.shortUrl;
+                document.getElementById('generatedLink').textContent = data.shortUrl;
                 document.getElementById('result').style.display = 'block';
                 document.getElementById('analytics').innerHTML = '<strong>Analytics:</strong> Click count will appear here after clicks';
+                
             } catch (error) {
+                console.error('Full error:', error); // Debug
                 alert('Error generating link: ' + error.message);
             }
         });
 
         async function checkAnalytics() {
             if (!currentLinkId) return;
+            
             try {
-                const response = await fetch(\`/api/analytics/\${currentLinkId}\`);
+                const response = await fetch(\`\${window.location.href}analytics/\${currentLinkId}\`);
                 const data = await response.json();
+                
                 document.getElementById('analytics').innerHTML = \`
                     <strong>Analytics:</strong><br>
                     Total Clicks: \${data.clicks}<br>
@@ -100,40 +152,34 @@ app.get('/', (req, res) => {
     </script>
 </body>
 </html>`;
-  res.send(htmlContent);
-});
-
-app.post('/api/create-link', (req, res) => {
-  const { iosUrl, androidUrl, desktopUrl } = req.body;
-  const id = nanoid(6);
-  links.set(id, { iosUrl, androidUrl, desktopUrl });
-  res.json({ shortUrl: `https://${req.headers.host}/${id}` });
-});
-
-app.get('/api/analytics/:id', (req, res) => {
-  const clickData = clicks.get(req.params.id) || [];
-  res.json({ clicks: clickData.length, timestamps: clickData });
-});
-
-app.get('/:id', (req, res) => {
-  const link = links.get(req.params.id);
-  if (!link) {
-    return res.status(404).send('Link not found');
+    return res.send(htmlContent);
   }
 
-  const timestamps = clicks.get(req.params.id) || [];
-  timestamps.push(new Date());
-  clicks.set(req.params.id, timestamps);
+  // Handle redirects - only if it's a GET request and looks like a link ID
+  if (method === 'GET' && url !== '/' && !url.includes('analytics') && !url.includes('api')) {
+    const linkId = url.startsWith('/') ? url.slice(1) : url;
+    
+    if (linkId && links.has(linkId)) {
+      const link = links.get(linkId);
+      
+      // Track click
+      const timestamps = clicks.get(linkId) || [];
+      timestamps.push(new Date());
+      clicks.set(linkId, timestamps);
 
-  const userAgent = req.headers['user-agent'];
-  const isMobile = /iPhone|Android/i.test(userAgent);
-  const isIOS = /iPhone/i.test(userAgent);
-  
-  const targetUrl = isMobile 
-    ? (isIOS ? link.iosUrl : link.androidUrl) 
-    : link.desktopUrl;
-  
-  res.redirect(targetUrl);
-});
+      // Detect device
+      const userAgent = req.headers['user-agent'] || '';
+      const isMobile = /iPhone|Android/i.test(userAgent);
+      const isIOS = /iPhone/i.test(userAgent);
+      
+      const targetUrl = isMobile 
+        ? (isIOS ? link.iosUrl : link.androidUrl) 
+        : link.desktopUrl;
+      
+      return res.redirect(302, targetUrl);
+    }
+  }
 
-export default app;
+  // Default 404
+  res.status(404).json({ error: 'Not found' });
+}
