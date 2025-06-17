@@ -67,6 +67,11 @@ app.get('/', (req, res) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ iosUrl, androidUrl, desktopUrl })
                 });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to create link');
+                }
+                
                 const { shortUrl } = await response.json();
                 currentLinkId = shortUrl.split('/').pop();
                 document.getElementById('generatedLink').href = shortUrl;
