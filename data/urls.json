@@ -1,0 +1,44 @@
+[
+  {
+    "shortCode": "ys182NU4",
+    "originalUrl": "https://apps.apple.com/app/example",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "routingRules": {
+      "IOS": "https://apps.apple.com/app/example",
+      "ANDROID": "https://play.google.com/store/apps/details?id=com.example",
+      "WEB": "https://example.com/web"
+    },
+    "platformRouting": true,
+    "createdAt": "2025-06-18T15:34:03.636Z",
+    "clickCount": 0
+  },
+  {
+    "shortCode": "giUlCYmv",
+    "originalUrl": "https://apps.apple.com/app/example",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "routingRules": {
+      "IOS": "https://apps.apple.com/app/example",
+      "ANDROID": "https://play.google.com/store/apps/details?id=com.example",
+      "WEB": "https://example.com/web"
+    },
+    "platformRouting": true,
+    "createdAt": "2025-06-18T15:35:55.736Z",
+    "clickCount": 1
+  },
+  {
+    "shortCode": "VP4661Ti",
+    "originalUrl": "https://apps.apple.com/us/app/amazon-shopping/id297606951",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "routingRules": {
+      "IOS": "https://apps.apple.com/us/app/amazon-shopping/id297606951",
+      "ANDROID": "https://play.google.com/store/apps/details?id=com.amazon.mShop.android.shopping",
+      "WEB": "https://amazon.com"
+    },
+    "platformRouting": true,
+    "createdAt": "2025-06-18T15:44:49.966Z",
+    "clickCount": 1
+  }
+]

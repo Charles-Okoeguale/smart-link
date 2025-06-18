@@ -1,9 +1,10 @@
 {
-    "version": 2,
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/api/index.js"
-      }
-    ]
+  "functions": {
+    "app/api/**/*.js": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NEXT_PUBLIC_BASE_URL": "@next_public_base_url"
   }
+} 
