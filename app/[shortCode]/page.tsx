@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 
 export default function RedirectPage() {
   const { shortCode } = useParams();
-  const [redirecting, setRedirecting] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,12 +43,10 @@ export default function RedirectPage() {
           window.location.href = result.targetUrl;
         } else {
           setError(result.error || 'Short URL not found');
-          setRedirecting(false);
         }
       } catch (error) {
         console.error('Redirect error:', error);
         setError('Failed to process redirect');
-        setRedirecting(false);
       }
     };
 

@@ -490,7 +490,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-black">
             <div className="space-y-3">
               <div>
-                <strong>🌍 Auto Geo-Detection:</strong> User's country is automatically detected from their IP address
+                <strong>🌍 Auto Geo-Detection:</strong> User&apos;s country is automatically detected from their IP address
               </div>
               <div>
                 <strong>📱 Platform Routing:</strong> Automatically route users based on their platform:
@@ -505,7 +505,7 @@ export default function Home() {
               <div>
                 <strong>🚀 Quick Test:</strong> 
                 <ol className="ml-4 mt-1 space-y-1">
-                  <li>1. Click "Create Short URL" with pre-filled values</li>
+                  <li>1. Click &quot;Create Short URL&quot; with pre-filled values</li>
                   <li>2. Copy the short URL and test on different devices</li>
                   <li>3. Check analytics to see platform detection working</li>
                 </ol>
