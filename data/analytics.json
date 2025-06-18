@@ -62,5 +62,21 @@
     "region": "FCT",
     "routingRule": "platform_routed",
     "platform": "web"
+  },
+  {
+    "shortCode": "NJhVHrMa",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "originalUrl": "https://apps.apple.com/app/example",
+    "targetUrl": "https://example.com/web?utm_campaign=demo-campaign-618&utm_source=shortlink&utm_medium=link&creator_id=poc-creator&click_id=NJhVHrMa_1750263679395&platform=web&country=NG",
+    "timestamp": "2025-06-18T16:21:19.099Z",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "ip": "102.91.5.73",
+    "country": "NG",
+    "countryName": "Nigeria",
+    "city": "Abuja",
+    "region": "FCT",
+    "routingRule": "platform_routed",
+    "platform": "web"
   }
 ]

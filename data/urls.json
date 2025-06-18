@@ -68,5 +68,33 @@
     "platformRouting": true,
     "createdAt": "2025-06-18T16:09:32.647Z",
     "clickCount": 1
+  },
+  {
+    "shortCode": "W2komV4o",
+    "originalUrl": "https://apps.apple.com/app/example",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "routingRules": {
+      "IOS": "https://apps.apple.com/app/example",
+      "ANDROID": "https://play.google.com/store/apps/details?id=com.example",
+      "WEB": "https://example.com/web"
+    },
+    "platformRouting": true,
+    "createdAt": "2025-06-18T16:21:09.406Z",
+    "clickCount": 0
+  },
+  {
+    "shortCode": "NJhVHrMa",
+    "originalUrl": "https://apps.apple.com/app/example",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "routingRules": {
+      "IOS": "https://apps.apple.com/app/example",
+      "ANDROID": "https://play.google.com/store/apps/details?id=com.example",
+      "WEB": "https://example.com/web"
+    },
+    "platformRouting": true,
+    "createdAt": "2025-06-18T16:21:13.339Z",
+    "clickCount": 1
   }
 ]

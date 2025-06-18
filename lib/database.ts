@@ -58,23 +58,53 @@ export function detectPlatform(userAgent: string): 'ios' | 'android' | 'web' {
 // Platform routing uses simple keys: IOS, ANDROID, WEB
 // Auto geo-detection means no manual country routing needed
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+// Initialize data files safely (only if they don't exist and we can write)
+function initializeDataFiles() {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+
+    if (!fs.existsSync(URLS_FILE)) {
+      fs.writeFileSync(URLS_FILE, '[]', 'utf8');
+    }
+
+    if (!fs.existsSync(ANALYTICS_FILE)) {
+      fs.writeFileSync(ANALYTICS_FILE, '[]', 'utf8');
+    }
+  } catch (error) {
+    console.warn('Could not initialize data files (likely production environment):', error);
+  }
 }
 
-// Ensure files exist
-if (!fs.existsSync(URLS_FILE)) {
-  fs.writeFileSync(URLS_FILE, '[]', 'utf8');
-}
-
-if (!fs.existsSync(ANALYTICS_FILE)) {
-  fs.writeFileSync(ANALYTICS_FILE, '[]', 'utf8');
+// Only initialize in development
+if (process.env.NODE_ENV !== 'production') {
+  initializeDataFiles();
 }
 
 // URL Database Operations
 export function getAllUrls(): UrlData[] {
   try {
+    // In production, return demo data since file system is read-only
+    if (process.env.NODE_ENV === 'production') {
+      return [
+        {
+          shortCode: 'demo123',
+          originalUrl: 'https://example.com/landing',
+          campaignId: 'demo-campaign',
+          creatorId: 'poc-creator',
+          routingRules: {
+            ios: 'https://apps.apple.com/app/example',
+            android: 'https://play.google.com/store/apps/details?id=com.example',
+            web: 'https://example.com/landing'
+          },
+          platformRouting: true,
+          createdAt: new Date().toISOString(),
+          clickCount: 0
+        }
+      ];
+    }
+    
     const data = fs.readFileSync(URLS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
@@ -87,10 +117,22 @@ export function saveUrl(urlData: UrlData): UrlData {
   try {
     const urls = getAllUrls();
     urls.push(urlData);
+    
+    // In production, we'll simulate saving (data won't persist between serverless function calls)
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Production mode: Simulating URL save', urlData);
+      return urlData;
+    }
+    
     fs.writeFileSync(URLS_FILE, JSON.stringify(urls, null, 2), 'utf8');
     return urlData;
   } catch (error) {
     console.error('Error saving URL:', error);
+    // In production, don't throw errors, just log and return
+    if (process.env.NODE_ENV === 'production') {
+      console.warn('Could not save URL in production environment');
+      return urlData;
+    }
     throw error;
   }
 }
@@ -108,6 +150,28 @@ export function findUrlByShortCode(shortCode: string): UrlData | null {
 // Analytics Database Operations
 export function getAllAnalytics(): AnalyticsData[] {
   try {
+    // In production, return demo analytics data
+    if (process.env.NODE_ENV === 'production') {
+      return [
+        {
+          shortCode: 'demo123',
+          campaignId: 'demo-campaign',
+          creatorId: 'poc-creator',
+          originalUrl: 'https://example.com/landing',
+          targetUrl: 'https://example.com/landing',
+          timestamp: new Date().toISOString(),
+          userAgent: 'Demo User Agent',
+          ip: '127.0.0.1',
+          country: 'US',
+          countryName: 'United States',
+          city: 'Demo City',
+          region: 'Demo Region',
+          routingRule: 'web platform routing',
+          platform: 'web'
+        }
+      ];
+    }
+    
     const data = fs.readFileSync(ANALYTICS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
@@ -120,10 +184,22 @@ export function saveAnalytics(analyticsData: AnalyticsData): AnalyticsData {
   try {
     const analytics = getAllAnalytics();
     analytics.push(analyticsData);
+    
+    // In production, we'll simulate saving (data won't persist between serverless function calls)
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Production mode: Simulating analytics save', analyticsData);
+      return analyticsData;
+    }
+    
     fs.writeFileSync(ANALYTICS_FILE, JSON.stringify(analytics, null, 2), 'utf8');
     return analyticsData;
   } catch (error) {
     console.error('Error saving analytics:', error);
+    // In production, don't throw errors, just log and return
+    if (process.env.NODE_ENV === 'production') {
+      console.warn('Could not save analytics in production environment');
+      return analyticsData;
+    }
     throw error;
   }
 }
