@@ -54,5 +54,19 @@
     "platformRouting": true,
     "createdAt": "2025-06-18T15:55:15.145Z",
     "clickCount": 1
+  },
+  {
+    "shortCode": "JJsIrEIt",
+    "originalUrl": "https://apps.apple.com/app/example",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "routingRules": {
+      "IOS": "https://apps.apple.com/app/example",
+      "ANDROID": "https://play.google.com/store/apps/details?id=com.example",
+      "WEB": "https://example.com/web"
+    },
+    "platformRouting": true,
+    "createdAt": "2025-06-18T16:09:32.647Z",
+    "clickCount": 1
   }
 ]
