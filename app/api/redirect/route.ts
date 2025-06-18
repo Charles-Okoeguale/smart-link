@@ -1,7 +1,5 @@
-import { findUrlByShortCode, saveAnalytics, getAllUrls, AnalyticsData, UrlData, detectPlatform } from '../../../lib/database';
+import { findUrlByShortCode, saveAnalytics, updateUrlClickCount, AnalyticsData, detectPlatform } from '../../../lib/database';
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 interface UserLocation {
   ip: string;
@@ -99,22 +97,8 @@ export async function POST(request: NextRequest) {
 
     saveAnalytics(analyticsData);
 
-    // Update click count for the URL
-    const allUrls = getAllUrls();
-    const updatedUrls = allUrls.map((url: UrlData) => {
-      if (url.shortCode === shortCode) {
-        return { ...url, clickCount: (url.clickCount || 0) + 1 };
-      }
-      return url;
-    });
-    
-    // Save updated URLs (this is a simple approach for POC)
-    // In production, you'd want atomic updates
-    fs.writeFileSync(
-      path.join(process.cwd(), 'data', 'urls.json'),
-      JSON.stringify(updatedUrls, null, 2),
-      'utf8'
-    );
+    // Update click count for the URL using the new function
+    updateUrlClickCount(shortCode);
 
     const routing: RoutingInfo = {
       original: urlData.originalUrl,
