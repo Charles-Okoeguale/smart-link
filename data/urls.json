@@ -96,5 +96,15 @@
     "platformRouting": true,
     "createdAt": "2025-06-18T16:21:13.339Z",
     "clickCount": 1
+  },
+  {
+    "shortCode": "nU6g2_ih",
+    "originalUrl": "https://example.com/landing",
+    "campaignId": "demo-campaign-618",
+    "creatorId": "poc-creator",
+    "routingRules": {},
+    "platformRouting": true,
+    "createdAt": "2025-06-18T16:58:41.752Z",
+    "clickCount": 0
   }
 ]
