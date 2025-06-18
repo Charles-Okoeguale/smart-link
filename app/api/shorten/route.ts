@@ -48,8 +48,11 @@ export async function POST(request: NextRequest) {
     // Save to database
     const savedUrl = saveUrl(urlData);
 
-    // Return the short URL
-    const shortUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/${shortCode}`;
+    // Get the base URL dynamically for production
+    const host = request.headers.get('host');
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+    const shortUrl = `${baseUrl}/${shortCode}`;
 
     return NextResponse.json({
       success: true,

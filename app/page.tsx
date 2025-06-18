@@ -177,7 +177,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-12">
       <style jsx global>{`
         input::placeholder,
         textarea::placeholder {
@@ -192,25 +192,25 @@ export default function Home() {
         }
       `}</style>
       
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Campaign URL Shortener - POC
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600">
             Quick demo: Platform routing with auto geo-detection
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
           {/* URL Generator Form */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold mb-6 text-black">Create Short URL</h2>
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-black">Create Short URL</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* POC Notice */}
               <div className="bg-yellow-50 p-3 rounded-lg">
-                <p className="text-sm text-yellow-800">
+                <p className="text-xs sm:text-sm text-yellow-800">
                   🚀 <strong>POC Mode:</strong> Default values are pre-filled for quick testing!
                 </p>
               </div>
@@ -225,13 +225,13 @@ export default function Home() {
                   value={formData.originalUrl}
                   onChange={handleInputChange}
                   placeholder="https://example.com/landing"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm sm:text-base"
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">Auto-filled from first platform rule</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Campaign ID *
@@ -242,7 +242,7 @@ export default function Home() {
                     value={formData.campaignId}
                     onChange={handleInputChange}
                     placeholder={getDefaultCampaignId()}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm sm:text-base"
                     required
                   />
                 </div>
@@ -257,22 +257,22 @@ export default function Home() {
                     value={formData.creatorId}
                     onChange={handleInputChange}
                     placeholder={getDefaultCreatorId()}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm sm:text-base"
                     required
                   />
                 </div>
               </div>
 
               {/* Auto Geo-Detection Info */}
-              <div className="bg-green-50 p-4 rounded-lg">
+              <div className="bg-green-50 p-3 sm:p-4 rounded-lg">
                 <h3 className="text-sm font-medium text-green-800 mb-1">🌍 Auto Geo-Detection</h3>
                 <p className="text-xs text-green-600">
                   User location is automatically detected via IP address. No manual setup required!
                 </p>
               </div>
 
-              {/* Platform Routing - Always Enabled for POC */}
-              <div className="bg-blue-50 p-4 rounded-lg">
+              {/* Platform Routing */}
+              <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
@@ -286,7 +286,7 @@ export default function Home() {
                   </span>
                 </label>
                 <p className="text-xs text-blue-600 mt-1">
-                  Route users to different URLs based on their platform (iOS → App Store, Android → Play Store, Web → Website)
+                  Route users to different URLs based on their platform
                 </p>
               </div>
 
@@ -300,11 +300,11 @@ export default function Home() {
                   </p>
                   
                   {platformRules.map((rule, index) => (
-                    <div key={index} className="flex gap-2 mb-2">
+                    <div key={index} className="flex flex-col sm:flex-row gap-2 mb-2">
                       <select
                         value={rule.platform}
                         onChange={(e) => handlePlatformRuleChange(index, 'platform', e.target.value)}
-                        className="w-36 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                        className="w-full sm:w-36 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm"
                       >
                         {PLATFORMS.map(platform => (
                           <option key={platform.id} value={platform.id}>
@@ -324,14 +324,14 @@ export default function Home() {
                         }
                         value={rule.url}
                         onChange={(e) => handlePlatformRuleChange(index, 'url', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm"
                       />
                       <button
                         type="button"
                         onClick={() => removePlatformRule(index)}
-                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-md"
+                        className="w-full sm:w-auto px-3 py-2 text-red-600 hover:bg-red-50 rounded-md text-sm"
                       >
-                        ✕
+                        ✕ Remove
                       </button>
                     </div>
                   ))}
@@ -349,7 +349,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base font-medium"
               >
                 {loading ? 'Creating...' : 'Create Short URL'}
               </button>
@@ -359,7 +359,7 @@ export default function Home() {
               <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
                 <h3 className="font-semibold text-green-800 mb-2">Success!</h3>
                 <p className="text-sm text-gray-700 mb-2">Your short URL:</p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <input
                     type="text"
                     value={result.shortUrl}
@@ -368,9 +368,9 @@ export default function Home() {
                   />
                   <button
                     onClick={() => navigator.clipboard.writeText(result.shortUrl)}
-                    className="px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 whitespace-nowrap"
                   >
-                    Copy
+                    Copy URL
                   </button>
                 </div>
                 <div className="mt-3 text-xs text-gray-600">
@@ -387,18 +387,18 @@ export default function Home() {
           </div>
 
           {/* Analytics Panel */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold mb-6 text-black">Analytics Dashboard</h2>
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-black">Analytics Dashboard</h2>
             
             {!analytics ? (
               <div className="text-center text-gray-500 py-8">
-                <p>Create a short URL or enter a campaign ID to view analytics</p>
-                <div className="mt-4">
+                <p className="text-sm sm:text-base">Create a short URL or enter a campaign ID to view analytics</p>
+                <div className="mt-4 flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     placeholder="Enter Campaign ID"
                     defaultValue={getDefaultCampaignId()}
-                    className="px-3 py-2 border border-gray-300 rounded-md mr-2 text-black"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-black text-sm"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && (e.target as HTMLInputElement).value) {
                         fetchAnalytics((e.target as HTMLInputElement).value);
@@ -410,24 +410,24 @@ export default function Home() {
                       const input = (e.target as HTMLButtonElement).previousElementSibling as HTMLInputElement;
                       if (input && input.value) fetchAnalytics(input.value);
                     }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm whitespace-nowrap"
                   >
-                    Load
+                    Load Analytics
                   </button>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-black">Total Clicks</h3>
-                    <p className="text-2xl font-bold text-black">
+                    <h3 className="font-semibold text-black text-sm sm:text-base">Total Clicks</h3>
+                    <p className="text-xl sm:text-2xl font-bold text-black">
                       {analytics.summary.totalClicks}
                     </p>
                   </div>
                   <div className="bg-green-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-black">Countries</h3>
-                    <p className="text-2xl font-bold text-black">
+                    <h3 className="font-semibold text-black text-sm sm:text-base">Countries</h3>
+                    <p className="text-xl sm:text-2xl font-bold text-black">
                       {analytics.summary.uniqueCountries}
                     </p>
                   </div>
@@ -435,7 +435,7 @@ export default function Home() {
 
                 {/* Platform Analytics */}
                 <div>
-                  <h3 className="font-semibold mb-2 text-black">Clicks by Platform</h3>
+                  <h3 className="font-semibold mb-2 text-black text-sm sm:text-base">Clicks by Platform</h3>
                   <div className="space-y-1">
                     {Object.entries(analytics.summary.clicksByPlatform).map(([platform, count]) => (
                       <div key={platform} className="flex justify-between text-sm text-black">
@@ -449,8 +449,8 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-2 text-black">Clicks by Country</h3>
-                  <div className="space-y-1">
+                  <h3 className="font-semibold mb-2 text-black text-sm sm:text-base">Clicks by Country</h3>
+                  <div className="space-y-1 max-h-32 sm:max-h-40 overflow-y-auto">
                     {Object.entries(analytics.summary.clicksByCountry).map(([country, count]) => (
                       <div key={country} className="flex justify-between text-sm text-black">
                         <span>{country || 'Unknown'}</span>
@@ -461,18 +461,18 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-2 text-black">Recent Clicks</h3>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                  <h3 className="font-semibold mb-2 text-black text-sm sm:text-base">Recent Clicks</h3>
+                  <div className="space-y-2 max-h-32 sm:max-h-40 overflow-y-auto">
                     {analytics.analytics.slice(-5).reverse().map((click: ClickData, index: number) => (
                       <div key={index} className="text-xs bg-gray-50 p-2 rounded text-black">
-                        <div className="flex justify-between">
-                          <span>{click.countryName || click.country}</span>
-                          <span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                          <span className="font-medium">{click.countryName || click.country}</span>
+                          <span className="text-xs">
                             {click.platform === 'ios' ? '🍎' : click.platform === 'android' ? '🤖' : click.platform === 'web' ? '🌐' : '❓'}
                             {new Date(click.timestamp).toLocaleString()}
                           </span>
                         </div>
-                        <div className="text-black opacity-70 truncate">
+                        <div className="text-black opacity-70 truncate text-xs">
                           {click.city && `${click.city}, `}{click.region} • {click.routingRule}
                         </div>
                       </div>
@@ -485,30 +485,34 @@ export default function Home() {
         </div>
 
         {/* POC Testing Guide */}
-        <div className="mt-12 bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 text-black">🧪 POC Testing Guide</h2>
-          <div className="space-y-3 text-sm text-black">
-            <div>
-              <strong>🌍 Auto Geo-Detection:</strong> User's country is automatically detected from their IP address
+        <div className="mt-8 sm:mt-12 bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-black">🧪 POC Testing Guide</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-black">
+            <div className="space-y-3">
+              <div>
+                <strong>🌍 Auto Geo-Detection:</strong> User's country is automatically detected from their IP address
+              </div>
+              <div>
+                <strong>📱 Platform Routing:</strong> Automatically route users based on their platform:
+                <ul className="ml-4 mt-1 space-y-1">
+                  <li>• 🍎 iOS users → App Store links</li>
+                  <li>• 🤖 Android users → Google Play Store links</li>
+                  <li>• 🌐 Desktop/Web users → Website links</li>
+                </ul>
+              </div>
             </div>
-            <div>
-              <strong>📱 Platform Routing:</strong> Automatically route users based on their platform:
-              <ul className="ml-4 mt-1">
-                <li>• 🍎 iOS users → App Store links</li>
-                <li>• 🤖 Android users → Google Play Store links</li>
-                <li>• 🌐 Desktop/Web users → Website links</li>
-              </ul>
-            </div>
-            <div>
-              <strong>🚀 Quick Test:</strong> 
-              <ol className="ml-4 mt-1">
-                <li>1. Click "Create Short URL" with pre-filled values</li>
-                <li>2. Copy the short URL and test on different devices</li>
-                <li>3. Check analytics to see platform detection working</li>
-              </ol>
-            </div>
-            <div>
-              <strong>📊 Analytics:</strong> Track clicks, countries, platforms, and user behavior for each campaign
+            <div className="space-y-3">
+              <div>
+                <strong>🚀 Quick Test:</strong> 
+                <ol className="ml-4 mt-1 space-y-1">
+                  <li>1. Click "Create Short URL" with pre-filled values</li>
+                  <li>2. Copy the short URL and test on different devices</li>
+                  <li>3. Check analytics to see platform detection working</li>
+                </ol>
+              </div>
+              <div>
+                <strong>📊 Analytics:</strong> Track clicks, countries, platforms, and user behavior for each campaign
+              </div>
             </div>
           </div>
         </div>
